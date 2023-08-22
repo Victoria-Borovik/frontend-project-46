@@ -10,15 +10,9 @@ const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', 
 const readFile = (filename) => readFileSync(getFixturePath(filename), 'utf-8');
 
 test('plain json', () => {
-  const result = `{
-  - follow: false
-    host: hexlet.io
-  - proxy: 123.234.53.22
-  - timeout: 50
-  + timeout: 20
-  + verbose: true
-}`;
-  expect(gendiff(getFixturePath('file1.json'), getFixturePath('file2.json'))).toEqual(result);
+  const expected = readFile('result.txt');
+  console.log(expected);
+  expect(gendiff(getFixturePath('file1.json'), getFixturePath('file2.json'))).toEqual(expected);
 });
 
 test('plain yaml', () => {
