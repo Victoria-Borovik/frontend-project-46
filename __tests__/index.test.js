@@ -19,7 +19,7 @@ beforeAll(() => {
   expected = readFile('result.txt');
 });
 
-test.each(filenames)('plain', (file1, file2) => {
+test.each(filenames)('nested files', (file1, file2) => {
   const actual = gendiff(getFixturePath(file1), getFixturePath(file2));
   expect(actual).toEqual(expected);
 });
