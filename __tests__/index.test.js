@@ -14,12 +14,19 @@ const filenames = [
   ['file1.yaml', 'file2.yaml'],
 ];
 
-let expected;
+let expectedStylish;
+let expectedPlain;
 beforeAll(() => {
-  expected = readFile('result.txt');
+  expectedStylish = readFile('stylish.txt');
+  expectedPlain = readFile('plain.txt');
 });
 
-test.each(filenames)('nested files', (file1, file2) => {
-  const actual = gendiff(getFixturePath(file1), getFixturePath(file2));
-  expect(actual).toEqual(expected);
+test.each(filenames)('nested files -- stylish format', (file1, file2) => {
+  const actual = gendiff(getFixturePath(file1), getFixturePath(file2), 'stylish');
+  expect(actual).toEqual(expectedStylish);
+});
+
+test.each(filenames)('nested files -- plain format', (file1, file2) => {
+  const actual = gendiff(getFixturePath(file1), getFixturePath(file2), 'plain');
+  expect(actual).toEqual(expectedPlain);
 });
