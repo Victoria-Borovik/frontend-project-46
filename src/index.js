@@ -3,9 +3,9 @@ import { readFileSync } from 'node:fs';
 import { cwd } from 'node:process';
 import { resolve, extname } from 'node:path';
 import parse from './parser.js';
-import format from './formatters/stylish.js';
+import format from './formatters/index.js';
 
-const getDifference = ([obj1, obj2]) => {
+const getDiffTree = ([obj1, obj2]) => {
   const sortedKeys = _.sortBy(_.uniq([..._.keys(obj1), ..._.keys(obj2)]));
   const result = sortedKeys.reduce((acc, key) => {
     let newAcc;
@@ -16,7 +16,7 @@ const getDifference = ([obj1, obj2]) => {
     } else if (obj1[key] === obj2[key]) {
       newAcc = [...acc, { name: key, value: obj2[key], status: 'unchanged' }];
     } else if (_.isObject(obj1[key]) && _.isObject(obj2[key])) {
-      const diffValue = getDifference([obj1[key], obj2[key]]);
+      const diffValue = getDiffTree([obj1[key], obj2[key]]);
       newAcc = [...acc, { name: key, value: diffValue, status: 'modified' }];
     } else {
       newAcc = [...acc,
@@ -30,11 +30,12 @@ const getDifference = ([obj1, obj2]) => {
   return result;
 };
 
-const func = (file1, file2) => {
-  const filesContent = [file1, file2]
+const func = (filepath1, filepath2, formatName) => {
+  const filesContent = [filepath1, filepath2]
     .map((file) => resolve(`${cwd()}`, file))
     .map((filepath) => parse(readFileSync(filepath, 'utf8'), extname(filepath).slice(1)));
-  return format(getDifference(filesContent));
+  const diffTree = getDiffTree(filesContent);
+  return format(diffTree, formatName);
 };
 
 export default func;
