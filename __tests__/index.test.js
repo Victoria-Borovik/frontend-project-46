@@ -16,9 +16,11 @@ const filenames = [
 
 let expectedStylish;
 let expectedPlain;
+let expectedJson;
 beforeAll(() => {
   expectedStylish = readFile('stylish.txt');
   expectedPlain = readFile('plain.txt');
+  expectedJson = readFile('json.txt');
 });
 
 test.each(filenames)('nested files -- stylish format', (file1, file2) => {
@@ -29,4 +31,9 @@ test.each(filenames)('nested files -- stylish format', (file1, file2) => {
 test.each(filenames)('nested files -- plain format', (file1, file2) => {
   const actual = gendiff(getFixturePath(file1), getFixturePath(file2), 'plain');
   expect(actual).toEqual(expectedPlain);
+});
+
+test.each(filenames)('nested files -- json format', (file1, file2) => {
+  const actual = gendiff(getFixturePath(file1), getFixturePath(file2), 'json');
+  expect(actual).toEqual(expectedJson);
 });
