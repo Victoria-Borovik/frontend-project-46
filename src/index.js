@@ -8,23 +8,22 @@ import format from './formatters/index.js';
 const getDiffTree = ([obj1, obj2]) => {
   const sortedKeys = _.sortBy(_.uniq([..._.keys(obj1), ..._.keys(obj2)]));
   const result = sortedKeys.reduce((acc, key) => {
-    let newAcc;
-    if (!_.hasIn(obj2, key)) {
-      newAcc = [...acc, { name: key, value: obj1[key], status: 'deleted' }];
-    } else if (!_.hasIn(obj1, key)) {
-      newAcc = [...acc, { name: key, value: obj2[key], status: 'added' }];
-    } else if (obj1[key] === obj2[key]) {
-      newAcc = [...acc, { name: key, value: obj2[key], status: 'unchanged' }];
-    } else if (_.isObject(obj1[key]) && _.isObject(obj2[key])) {
+    if (_.isObject(obj1[key]) && _.isObject(obj2[key])) {
       const diffValue = getDiffTree([obj1[key], obj2[key]]);
-      newAcc = [...acc, { name: key, value: diffValue, status: 'modified' }];
-    } else {
-      newAcc = [...acc,
-        { name: key, value: obj1[key], status: 'deleted' },
-        { name: key, value: obj2[key], status: 'added' },
-      ];
+      return [...acc, { status: 'modified', name: key, value: diffValue }];
     }
-    return newAcc;
+    if (!_.hasIn(obj1, key)) {
+      return [...acc, { status: 'added', name: key, value: obj2[key] }];
+    }
+    if (!_.hasIn(obj2, key)) {
+      return [...acc, { status: 'removed', name: key, value: obj1[key] }];
+    }
+    if (obj1[key] !== obj2[key]) {
+      return [...acc, {
+        status: 'updated', name: key, valueBefore: obj1[key], valueAfter: obj2[key],
+      }];
+    }
+    return [...acc, { status: 'unchanged', name: key, value: obj2[key] }];
   }, []);
 
   return result;
