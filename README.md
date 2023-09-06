@@ -14,7 +14,7 @@ make install
 ```
 
 ### Usage
-CLI displays differences in three different formats.
+CLI displays differences in three formats.
 
 #### - stylish (default)
 ```gendiff <filepath1> <filepath2>```
