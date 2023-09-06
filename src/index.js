@@ -8,7 +8,8 @@ import format from './formatters/index.js';
 const getDiffTree = ([obj1, obj2]) => {
   const keys1 = _.keys(obj1);
   const keys2 = _.keys(obj2);
-  const sortedKeys = _.sortBy(_.uniq([...keys1, ...keys2]));
+  const uniqKeys = _.uniq([...keys1, ...keys2]);
+  const sortedKeys = _.sortBy(uniqKeys);
   const tree = sortedKeys.map((key) => {
     const value1 = obj1[key];
     const value2 = obj2[key];
