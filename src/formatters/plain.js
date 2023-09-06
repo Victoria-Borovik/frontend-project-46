@@ -29,9 +29,7 @@ export default (diff) => {
         }
         case 'updated': {
           const { valueBefore, valueAfter } = rest;
-          const currentValueBefore = normalizeValue(valueBefore);
-          const currentValueAfter = normalizeValue(valueAfter);
-          return `Property '${currentName}' was updated. From ${currentValueBefore} to ${currentValueAfter}`;
+          return `Property '${currentName}' was updated. From ${normalizeValue(valueBefore)} to ${normalizeValue(valueAfter)}`;
         }
         case 'modified': {
           return iter(value, currentName);
