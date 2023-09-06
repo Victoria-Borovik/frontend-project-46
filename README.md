@@ -16,22 +16,22 @@ make install
 ### Usage
 CLI displays differences in three different formats.
 
-##### stylish (default)
-`gendiff <filepath1> <filepath2>`\n
+##### - stylish (default)
+```gendiff <filepath1> <filepath2>```
 or
-`gendiff --format stylish <filepath1> <filepath2>`
+```gendiff --format stylish <filepath1> <filepath2>```
 
 Displays differences as a nested structure.
 [![asciicast](https://asciinema.org/a/3Vlv8oe7pGPNQIztVAygJnhS5.svg)](https://asciinema.org/a/3Vlv8oe7pGPNQIztVAygJnhS5)
 
-##### plain
-`gendiff --format plain <filepath1> <filepath2>`
+##### - plain
+```gendiff --format plain <filepath1> <filepath2>```
 
 Displays a text description of differences.
 [![asciicast](https://asciinema.org/a/raBHjakwsKPTMNoBLUWKih3ld.svg)](https://asciinema.org/a/raBHjakwsKPTMNoBLUWKih3ld)
 
-##### json
-`gendiff --format json <filepath1> <filepath2>`
+##### - json
+```gendiff --format json <filepath1> <filepath2>```
 
 Displays differences in JSON format for processing result by other programs.
 [![asciicast](https://asciinema.org/a/EKFsopltQQyhTAN6zywXfse2J.svg)](https://asciinema.org/a/EKFsopltQQyhTAN6zywXfse2J)
