@@ -1,16 +1,16 @@
-import stylish from './stylish.js';
-import plain from './plain.js';
-import json from './json.js';
+import formatStylish from './stylish.js';
+import formatPlain from './plain.js';
+import formatJson from './json.js';
+
+const formatters = {
+  stylish: formatStylish,
+  plain: formatPlain,
+  json: formatJson,
+};
 
 export default (diff, formatName) => {
-  if (formatName === 'stylish') {
-    return stylish(diff);
+  if (!Object.hasOwn(formatters, formatName)) {
+    throw new Error(`Format '${formatName}' is unknown`);
   }
-  if (formatName === 'plain') {
-    return plain(diff);
-  }
-  if (formatName === 'json') {
-    return json(diff);
-  }
-  throw new Error(`Format '${formatName}' is unknown`);
+  return formatters[formatName](diff);
 };
