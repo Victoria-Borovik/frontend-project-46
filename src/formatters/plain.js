@@ -16,7 +16,7 @@ export default (diff) => {
   const iter = (currentDiff, parentName = '') => {
     const lines = currentDiff.flatMap((item) => {
       const {
-        status, name, value, ...rest
+        status, name, value, valueBefore, valueAfter,
       } = item;
       const currentName = normalizeName(name, parentName);
       switch (status) {
@@ -28,7 +28,6 @@ export default (diff) => {
           return `Property '${currentName}' was removed`;
         }
         case 'updated': {
-          const { valueBefore, valueAfter } = rest;
           return `Property '${currentName}' was updated. From ${normalizeValue(valueBefore)} to ${normalizeValue(valueAfter)}`;
         }
         case 'modified': {
