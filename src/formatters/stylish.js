@@ -31,14 +31,13 @@ export default (diff) => {
 
     const lines = currentDiff.map((item) => {
       const {
-        status, name, value, ...rest
+        status, name, value, valueBefore, valueAfter,
       } = item;
       switch (status) {
         case 'modified': {
           return `${currentIdent}${entities.unchanged}${name}: ${iter(value, depth + 1)}`;
         }
         case 'updated': {
-          const { valueBefore, valueAfter } = rest;
           return `${currentIdent}${entities.removed}${name}: ${convertToStr(valueBefore, depth + 1)}\n${currentIdent}${entities.added}${name}: ${convertToStr(valueAfter, depth + 1)}`;
         }
         default: {
