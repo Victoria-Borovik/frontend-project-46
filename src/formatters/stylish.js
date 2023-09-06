@@ -10,44 +10,41 @@ const entities = {
   unchanged: '  ',
 };
 
-const build = (value, depth) => {
-  const iter = (currentValue, currentDepth) => {
-    if (!_.isObject(currentValue)) {
-      return `${currentValue}`;
-    }
-    const currentIdentSize = identSize * currentDepth;
-    const bracketIdentSize = identSize * currentDepth - identSize;
-    const currentIdent = replacer.repeat(currentIdentSize);
-    const bracketIdent = replacer.repeat(bracketIdentSize);
+const convertToStr = (value, depth) => {
+  if (!_.isObject(value)) {
+    return `${value}`;
+  }
+  const currentIdent = replacer.repeat(identSize * depth);
+  const bracketIdent = replacer.repeat(identSize * depth - identSize);
 
-    const lines = Object
-      .entries(currentValue)
-      .map(([key, val]) => `${currentIdent}${key}: ${iter(val, currentDepth + 1)}`);
+  const lines = Object
+    .entries(value)
+    .map(([key, val]) => `${currentIdent}${key}: ${convertToStr(val, depth + 1)}`);
 
-    return ['{', ...lines, `${bracketIdent}}`].join('\n');
-  };
-
-  return iter(value, depth);
+  return ['{', ...lines, `${bracketIdent}}`].join('\n');
 };
 
 export default (diff) => {
   const iter = (currentDiff, depth) => {
-    const currentIdentSize = identSize * depth - offset;
-    const bracketIdentSize = identSize * depth - identSize;
-    const currentIdent = replacer.repeat(currentIdentSize);
-    const bracketIdent = replacer.repeat(bracketIdentSize);
+    const currentIdent = replacer.repeat(identSize * depth - offset);
+    const bracketIdent = replacer.repeat(identSize * depth - identSize);
 
-    const lines = currentDiff.map((node) => {
-      const { status, ...rest } = node;
-      if (status === 'updated') {
-        const { name, valueBefore, valueAfter } = rest;
-        return `${currentIdent}${entities.removed}${name}: ${build(valueBefore, depth + 1)}\n${currentIdent}${entities.added}${name}: ${build(valueAfter, depth + 1)}`;
+    const lines = currentDiff.map((item) => {
+      const {
+        status, name, value, ...rest
+      } = item;
+      switch (status) {
+        case 'modified': {
+          return `${currentIdent}${entities.unchanged}${name}: ${iter(value, depth + 1)}`;
+        }
+        case 'updated': {
+          const { valueBefore, valueAfter } = rest;
+          return `${currentIdent}${entities.removed}${name}: ${convertToStr(valueBefore, depth + 1)}\n${currentIdent}${entities.added}${name}: ${convertToStr(valueAfter, depth + 1)}`;
+        }
+        default: {
+          return `${currentIdent}${entities[status]}${name}: ${convertToStr(value, depth + 1)}`;
+        }
       }
-      const { name, value } = rest;
-      if (status === 'modified') {
-        return `${currentIdent}${entities.unchanged}${name}: ${iter(value, depth + 1)}`;
-      }
-      return `${currentIdent}${entities[status]}${name}: ${build(value, depth + 1)}`;
     });
     return ['{', ...lines, `${bracketIdent}}`].join('\n');
   };
