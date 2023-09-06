@@ -29,7 +29,7 @@ const getDiffTree = ([obj1, obj2]) => {
   return result;
 };
 
-const func = (filepath1, filepath2, formatName) => {
+const func = (filepath1, filepath2, formatName = 'stylish') => {
   const filesContent = [filepath1, filepath2]
     .map((file) => resolve(`${cwd()}`, file))
     .map((filepath) => parse(readFileSync(filepath, 'utf8'), extname(filepath).slice(1)));

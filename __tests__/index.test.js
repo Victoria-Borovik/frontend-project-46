@@ -1,7 +1,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { readFileSync } from 'fs';
-import gendiff from '../src/index.js';
+import genDiff from '../src/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,18 +22,22 @@ beforeAll(() => {
   expectedPlain = readFile('plain.txt');
   expectedJson = readFile('json.txt');
 });
+test.each(filenames)('nested files -- no format', (file1, file2) => {
+  const actual = genDiff(getFixturePath(file1), getFixturePath(file2));
+  expect(actual).toEqual(expectedStylish);
+});
 
 test.each(filenames)('nested files -- stylish format', (file1, file2) => {
-  const actual = gendiff(getFixturePath(file1), getFixturePath(file2), 'stylish');
+  const actual = genDiff(getFixturePath(file1), getFixturePath(file2), 'stylish');
   expect(actual).toEqual(expectedStylish);
 });
 
 test.each(filenames)('nested files -- plain format', (file1, file2) => {
-  const actual = gendiff(getFixturePath(file1), getFixturePath(file2), 'plain');
+  const actual = genDiff(getFixturePath(file1), getFixturePath(file2), 'plain');
   expect(actual).toEqual(expectedPlain);
 });
 
 test.each(filenames)('nested files -- json format', (file1, file2) => {
-  const actual = gendiff(getFixturePath(file1), getFixturePath(file2), 'json');
+  const actual = genDiff(getFixturePath(file1), getFixturePath(file2), 'json');
   expect(actual).toEqual(expectedJson);
 });
