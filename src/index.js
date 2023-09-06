@@ -6,35 +6,36 @@ import parse from './parser.js';
 import format from './formatters/index.js';
 
 const getDiffTree = ([obj1, obj2]) => {
-  const sortedKeys = _.sortBy(_.uniq([..._.keys(obj1), ..._.keys(obj2)]));
-  const result = sortedKeys.reduce((acc, key) => {
-    if (_.isObject(obj1[key]) && _.isObject(obj2[key])) {
-      const diffValue = getDiffTree([obj1[key], obj2[key]]);
-      return [...acc, { status: 'modified', name: key, value: diffValue }];
+  const keys1 = _.keys(obj1);
+  const keys2 = _.keys(obj2);
+  const sortedKeys = _.sortBy(_.uniq([...keys1, ...keys2]));
+  const tree = sortedKeys.map((key) => {
+    const value1 = obj1[key];
+    const value2 = obj2[key];
+    if (_.isObject(value1) && _.isObject(value2)) {
+      return { status: 'modified', name: key, value: getDiffTree([value1, value2]) };
     }
     if (!_.hasIn(obj1, key)) {
-      return [...acc, { status: 'added', name: key, value: obj2[key] }];
+      return { status: 'added', name: key, value: value2 };
     }
     if (!_.hasIn(obj2, key)) {
-      return [...acc, { status: 'removed', name: key, value: obj1[key] }];
+      return { status: 'removed', name: key, value: value1 };
     }
-    if (obj1[key] !== obj2[key]) {
-      return [...acc, {
-        status: 'updated', name: key, valueBefore: obj1[key], valueAfter: obj2[key],
-      }];
+    if (value1 !== value2) {
+      return {
+        status: 'updated', name: key, valueBefore: value1, valueAfter: value2,
+      };
     }
-    return [...acc, { status: 'unchanged', name: key, value: obj2[key] }];
-  }, []);
+    return { status: 'unchanged', name: key, value: value2 };
+  });
 
-  return result;
+  return tree;
 };
 
-const func = (filepath1, filepath2, formatName = 'stylish') => {
+export default (filepath1, filepath2, formatName = 'stylish') => {
   const filesContent = [filepath1, filepath2]
     .map((file) => resolve(`${cwd()}`, file))
     .map((filepath) => parse(readFileSync(filepath, 'utf8'), extname(filepath).slice(1)));
   const diffTree = getDiffTree(filesContent);
   return format(diffTree, formatName);
 };
-
-export default func;
