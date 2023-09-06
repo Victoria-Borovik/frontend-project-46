@@ -14,14 +14,10 @@ const filenames = [
   ['file1.yaml', 'file2.yaml'],
 ];
 
-let expectedStylish;
-let expectedPlain;
-let expectedJson;
-beforeAll(() => {
-  expectedStylish = readFile('stylish.txt');
-  expectedPlain = readFile('plain.txt');
-  expectedJson = readFile('json.txt');
-});
+const expectedStylish = readFile('stylish.txt');
+const expectedPlain = readFile('plain.txt');
+const expectedJson = readFile('json.txt');
+
 test.each(filenames)('nested files -- no format', (file1, file2) => {
   const actual = genDiff(getFixturePath(file1), getFixturePath(file2));
   expect(actual).toEqual(expectedStylish);
