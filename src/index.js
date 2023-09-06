@@ -5,12 +5,14 @@ import { resolve, extname } from 'node:path';
 import parse from './parser.js';
 import format from './formatters/index.js';
 
+const getUniteKeys = (obj1, obj2) => {
+  const uniqKeys = _.uniq([..._.keys(obj1), ..._.keys(obj2)]);
+  return _.sortBy(uniqKeys);
+};
+
 const getDiffTree = ([obj1, obj2]) => {
-  const keys1 = _.keys(obj1);
-  const keys2 = _.keys(obj2);
-  const uniqKeys = _.uniq([...keys1, ...keys2]);
-  const sortedKeys = _.sortBy(uniqKeys);
-  const tree = sortedKeys.map((key) => {
+  const keys = getUniteKeys(obj1, obj2);
+  const tree = keys.map((key) => {
     const value1 = obj1[key];
     const value2 = obj2[key];
     if (_.isObject(value1) && _.isObject(value2)) {
