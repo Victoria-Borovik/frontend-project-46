@@ -5,7 +5,7 @@ const getUnitedKeys = (data1, data2) => {
   return _.sortBy(uniqKeys);
 };
 
-const getDiffTree = ([data1, data2]) => {
+const getDiffTree = (data1, data2) => {
   const keys = getUnitedKeys(data1, data2);
   const tree = keys.map((key) => {
     if (!_.hasIn(data1, key)) {
@@ -15,7 +15,7 @@ const getDiffTree = ([data1, data2]) => {
       return { type: 'removed', key, value: data1[key] };
     }
     if (_.isObject(data1[key]) && _.isObject(data2[key])) {
-      return { type: 'nested', key, value: getDiffTree([data1[key], data2[key]]) };
+      return { type: 'nested', key, value: getDiffTree(data1[key], data2[key]) };
     }
     if (data1[key] !== data2[key]) {
       return {
