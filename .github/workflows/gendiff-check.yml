@@ -1,4 +1,4 @@
-name: gendiff-CI
+name: gendiff-check
 on: push
 jobs:
   build:
@@ -10,7 +10,6 @@ jobs:
         node-version: '18.x'
         cache: 'npm'
     - run: make install
-    - run: make test
     - run: make lint
     - name: Test & publish code coverage
       uses: paambaati/codeclimate-action@v5.0.0
