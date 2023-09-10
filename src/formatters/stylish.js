@@ -31,17 +31,17 @@ export default (diff) => {
 
     const lines = currentDiff.map((item) => {
       const {
-        status, name, value, valueBefore, valueAfter,
+        type, key, value, value1, value2,
       } = item;
-      switch (status) {
-        case 'modified': {
-          return `${currentIdent}${entities.unchanged}${name}: ${iter(value, depth + 1)}`;
+      switch (type) {
+        case 'nested': {
+          return `${currentIdent}${entities.unchanged}${key}: ${iter(value, depth + 1)}`;
         }
         case 'updated': {
-          return `${currentIdent}${entities.removed}${name}: ${convertToStr(valueBefore, depth + 1)}\n${currentIdent}${entities.added}${name}: ${convertToStr(valueAfter, depth + 1)}`;
+          return `${currentIdent}${entities.removed}${key}: ${convertToStr(value1, depth + 1)}\n${currentIdent}${entities.added}${key}: ${convertToStr(value2, depth + 1)}`;
         }
         default: {
-          return `${currentIdent}${entities[status]}${name}: ${convertToStr(value, depth + 1)}`;
+          return `${currentIdent}${entities[type]}${key}: ${convertToStr(value, depth + 1)}`;
         }
       }
     });

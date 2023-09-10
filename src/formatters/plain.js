@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const normalizeName = (name, parentName) => ((parentName === '') ? `${name}` : `${parentName}.${name}`);
+const normalizeKey = (key, parentKey) => ((parentKey === '') ? `${key}` : `${parentKey}.${key}`);
 
 const normalizeValue = (value) => {
   if (_.isObject(value)) {
@@ -13,25 +13,25 @@ const normalizeValue = (value) => {
 };
 
 export default (diff) => {
-  const iter = (currentDiff, parentName = '') => {
+  const iter = (currentDiff, parentKey = '') => {
     const lines = currentDiff.flatMap((item) => {
       const {
-        status, name, value, valueBefore, valueAfter,
+        type, key, value, value1, value2,
       } = item;
-      const currentName = normalizeName(name, parentName);
-      switch (status) {
+      const currentKey = normalizeKey(key, parentKey);
+      switch (type) {
         case 'added': {
           const currentValue = normalizeValue(value);
-          return `Property '${currentName}' was added with value: ${currentValue}`;
+          return `Property '${currentKey}' was added with value: ${currentValue}`;
         }
         case 'removed': {
-          return `Property '${currentName}' was removed`;
+          return `Property '${currentKey}' was removed`;
         }
         case 'updated': {
-          return `Property '${currentName}' was updated. From ${normalizeValue(valueBefore)} to ${normalizeValue(valueAfter)}`;
+          return `Property '${currentKey}' was updated. From ${normalizeValue(value1)} to ${normalizeValue(value2)}`;
         }
-        case 'modified': {
-          return iter(value, currentName);
+        case 'nested': {
+          return iter(value, currentKey);
         }
         default:
           return [];
