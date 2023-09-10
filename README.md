@@ -37,7 +37,6 @@ Displays a text description of differences.
 
 Displays differences in JSON format for processing result by other programs.
 
-[![asciicast](https://asciinema.org/a/EKFsopltQQyhTAN6zywXfse2J.svg)](https://asciinema.org/a/EKFsopltQQyhTAN6zywXfse2J)
-
+[![asciicast](https://asciinema.org/a/atHsYyKaK3EevFW6MavPvH6gt.svg)](https://asciinema.org/a/atHsYyKaK3EevFW6MavPvH6gt)
 
 
