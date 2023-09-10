@@ -6,9 +6,9 @@ const parsers = {
   yml: yaml.load,
 };
 
-export default (data, extension) => {
-  if (!Object.hasOwn(parsers, extension)) {
-    throw new Error(`Error: unsupported format ${extension}`);
+export default (data, format) => {
+  if (!Object.hasOwn(parsers, format)) {
+    throw new Error(`Error: unsupported format ${format}`);
   }
-  return parsers[extension](data);
+  return parsers[format](data);
 };
