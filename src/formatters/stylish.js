@@ -31,10 +31,6 @@ const format = (diff, depth = 1) => {
         const { value } = item;
         return `${getIdent(depth)}- ${key}: ${stringify(value, depth + 1)}`;
       }
-      case 'unchanged': {
-        const { value } = item;
-        return `${getIdent(depth)}  ${key}: ${stringify(value, depth + 1)}`;
-      }
       case 'updated': {
         const { value1, value2 } = item;
         const line1 = `${getIdent(depth)}- ${key}: ${stringify(value1, depth + 1)}`;
@@ -46,7 +42,8 @@ const format = (diff, depth = 1) => {
         return `${getIdent(depth)}  ${key}: ${format(children, depth + 1)}`;
       }
       default: {
-        return '';
+        const { value } = item;
+        return `${getIdent(depth)}  ${key}: ${stringify(value, depth + 1)}`;
       }
     }
   }).join('\n');
