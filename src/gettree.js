@@ -15,7 +15,7 @@ const getDiffTree = (data1, data2) => {
       return { type: 'removed', key, value: data1[key] };
     }
     if (_.isObject(data1[key]) && _.isObject(data2[key])) {
-      return { type: 'nested', key, value: getDiffTree(data1[key], data2[key]) };
+      return { type: 'nested', key, children: getDiffTree(data1[key], data2[key]) };
     }
     if (data1[key] !== data2[key]) {
       return {

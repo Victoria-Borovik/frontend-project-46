@@ -12,32 +12,32 @@ const normalizeValue = (value) => {
   return value;
 };
 
-export default (diff) => {
-  const iter = (currentDiff, parentKey = '') => {
-    const lines = currentDiff.flatMap((item) => {
-      const {
-        type, key, value, value1, value2,
-      } = item;
-      const currentKey = normalizeKey(key, parentKey);
-      switch (type) {
-        case 'added': {
-          const currentValue = normalizeValue(value);
-          return `Property '${currentKey}' was added with value: ${currentValue}`;
-        }
-        case 'removed': {
-          return `Property '${currentKey}' was removed`;
-        }
-        case 'updated': {
-          return `Property '${currentKey}' was updated. From ${normalizeValue(value1)} to ${normalizeValue(value2)}`;
-        }
-        case 'nested': {
-          return iter(value, currentKey);
-        }
-        default:
-          return [];
+const format = (diff, parentKey = '') => {
+  const lines = diff.flatMap((item) => {
+    const { type, key } = item;
+    const currentKey = normalizeKey(key, parentKey);
+    switch (type) {
+      case 'added': {
+        const { value } = item;
+        const currentValue = normalizeValue(value);
+        return `Property '${currentKey}' was added with value: ${currentValue}`;
       }
-    });
-    return lines.join('\n');
-  };
-  return iter(diff);
+      case 'removed': {
+        return `Property '${currentKey}' was removed`;
+      }
+      case 'updated': {
+        const { value1, value2 } = item;
+        return `Property '${currentKey}' was updated. From ${normalizeValue(value1)} to ${normalizeValue(value2)}`;
+      }
+      case 'nested': {
+        const { children } = item;
+        return format(children, currentKey);
+      }
+      default:
+        return [];
+    }
+  });
+  return lines.join('\n');
 };
+
+export default format;

@@ -4,48 +4,53 @@ const identSize = 4;
 const offset = 2;
 const replacer = ' ';
 
-const entities = {
-  added: '+ ',
-  removed: '- ',
-  unchanged: '  ',
-};
+const getIdent = (depth) => replacer.repeat(identSize * depth - offset);
+const getBracketIndent = (depth) => replacer.repeat(identSize * depth - identSize);
 
-const convertToStr = (value, depth) => {
+const stringify = (value, depth) => {
   if (!_.isObject(value)) {
-    return `${value}`;
+    return String(value);
   }
-  const currentIdent = replacer.repeat(identSize * depth);
-  const bracketIdent = replacer.repeat(identSize * depth - identSize);
-
   const lines = Object
     .entries(value)
-    .map(([key, val]) => `${currentIdent}${key}: ${convertToStr(val, depth + 1)}`);
+    .map(([key, val]) => `${getIdent(depth)}  ${key}: ${stringify(val, depth + 1)}`)
+    .join('\n');
 
-  return ['{', ...lines, `${bracketIdent}}`].join('\n');
+  return `{\n${lines}\n${getBracketIndent(depth)}}`;
 };
 
-export default (diff) => {
-  const iter = (currentDiff, depth) => {
-    const currentIdent = replacer.repeat(identSize * depth - offset);
-    const bracketIdent = replacer.repeat(identSize * depth - identSize);
-
-    const lines = currentDiff.map((item) => {
-      const {
-        type, key, value, value1, value2,
-      } = item;
-      switch (type) {
-        case 'nested': {
-          return `${currentIdent}${entities.unchanged}${key}: ${iter(value, depth + 1)}`;
-        }
-        case 'updated': {
-          return `${currentIdent}${entities.removed}${key}: ${convertToStr(value1, depth + 1)}\n${currentIdent}${entities.added}${key}: ${convertToStr(value2, depth + 1)}`;
-        }
-        default: {
-          return `${currentIdent}${entities[type]}${key}: ${convertToStr(value, depth + 1)}`;
-        }
+const format = (diff, depth = 1) => {
+  const lines = diff.map((item) => {
+    const { type, key } = item;
+    switch (type) {
+      case 'added': {
+        const { value } = item;
+        return `${getIdent(depth)}+ ${key}: ${stringify(value, depth + 1)}`;
       }
-    });
-    return ['{', ...lines, `${bracketIdent}}`].join('\n');
-  };
-  return iter(diff, 1);
+      case 'removed': {
+        const { value } = item;
+        return `${getIdent(depth)}- ${key}: ${stringify(value, depth + 1)}`;
+      }
+      case 'unchanged': {
+        const { value } = item;
+        return `${getIdent(depth)}  ${key}: ${stringify(value, depth + 1)}`;
+      }
+      case 'updated': {
+        const { value1, value2 } = item;
+        const line1 = `${getIdent(depth)}- ${key}: ${stringify(value1, depth + 1)}`;
+        const line2 = `${getIdent(depth)}+ ${key}: ${stringify(value2, depth + 1)}`;
+        return `${line1}\n${line2}`;
+      }
+      case 'nested': {
+        const { children } = item;
+        return `${getIdent(depth)}  ${key}: ${format(children, depth + 1)}`;
+      }
+      default: {
+        return '';
+      }
+    }
+  }).join('\n');
+  return `{\n${lines}\n${getBracketIndent(depth)}}`;
 };
+
+export default format;
